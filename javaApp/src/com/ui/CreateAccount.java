@@ -1,23 +1,18 @@
-package com.GUI;
+package com.ui;
 
-import com.User;
-
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.LayoutManager;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingContainer;
 
-public class CreateAccount {
+// TODO Modernize (away from a static implementation)
+class CreateAccount {
 
     public static JPanel pnPanel0;
     public static JLabel lbMessage;
