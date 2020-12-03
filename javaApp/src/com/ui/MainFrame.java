@@ -17,6 +17,9 @@ public class MainFrame extends JFrame {
         // Add the session page container (wrapped in a scroll pane)
         this.add(new JScrollPane(session.pageContainer), BorderLayout.CENTER);
 
+        // Set initial default button
+        session.setDefaultButton();
+
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         // Set the system look and feel

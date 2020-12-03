@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class SqlConnection {
 
-    private java.sql.Connection connection;
+    public Connection connection;
     private ResultSet result = null;
     private java.sql.ResultSetMetaData rsMetaData = null;
     private int columnCount = 0;
@@ -12,10 +12,10 @@ public class SqlConnection {
 
     public SqlConnection(String url) {
         try {
-            Class.forName("com.mysql.jdbc.Driver").getDeclaredConstructor().newInstance();
-            connection = java.sql.DriverManager.getConnection("jdbc:mysql://" + url + "?useUnicode=true&useFastDateParsing=false&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull");
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = java.sql.DriverManager.getConnection("jdbc:mysql://" + url + "");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -33,6 +33,23 @@ public class SqlConnection {
             System.out.println(e.getMessage());
         }
         return result;
+    }
+
+    public int update(String statement) {
+        int res = -1;
+        try {
+            java.sql.Statement request = connection.createStatement();
+            res = request.executeUpdate(statement);
+            rsMetaData = result.getMetaData();
+            columnCount = rsMetaData.getColumnCount();
+            columnNames = new String[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                columnNames[i] = rsMetaData.getColumnName(i + 1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return res;
     }
 
     public String[] getColumnNames() {

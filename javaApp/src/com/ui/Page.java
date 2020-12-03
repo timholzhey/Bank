@@ -1,6 +1,7 @@
 package com.ui;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JButton;
 
 /**
  * A single UI page.
@@ -14,5 +15,9 @@ abstract class Page extends JPanel {
     public Page(final Session session) {
         this.session = session;
     }
+
+	public JButton getDefaultButton() {
+		return null;
+	}
 
 }

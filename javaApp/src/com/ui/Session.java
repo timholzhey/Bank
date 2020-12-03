@@ -1,5 +1,6 @@
 package com.ui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.awt.FlowLayout;
@@ -14,10 +15,12 @@ final class Session {
     // Using an internal state machine to manage the current session state
     private enum State {
         LOGIN,
-        VIEW_ACCOUNT
+        VIEW_ACCOUNT,
+        CREATE_ACCOUNT
     }
 
     private State currentState;
+    private Page currentPage;
 
     /**
      * The page container. Accessible internally so it can be displayed by the object containing the session.
@@ -41,7 +44,7 @@ final class Session {
      * 
      * @return <code>true</code> if the login was successful, <code>false</code> otherwise.
      */
-    boolean login(final String loginName, final char[] password) {
+    public boolean login(final String loginName, final char[] password) {
         // Throw an error if this session is already logged in
         if (this.isLoggedIn()) {
             throw new IllegalStateException("Session already logged in to an account.");
@@ -70,32 +73,108 @@ final class Session {
         return this.isLoggedIn();
     }
 
+    public boolean logout() {
+        // Throw an error if this session isn't logged in
+        if (!this.isLoggedIn()) {
+            throw new IllegalStateException("Session is not logged into an account.");
+        }
+
+        // TODO: Maybe autosave changes before logging out?
+        // perform logout
+        try {
+            User.logout();
+        }
+        catch (final Exception e) {
+            e.printStackTrace();
+            // Logout failed
+            return false;
+        }
+
+        // Change the state back to LOGIN if successful
+        changeState(State.LOGIN);
+        setDefaultButton();
+
+        return true;
+    }
+
+    public void createAccountPage() {
+        changeState(State.CREATE_ACCOUNT);
+        setDefaultButton();
+    }
+
+    public void loginPage() {
+        changeState(State.LOGIN);
+        setDefaultButton();
+    }
+
+    public ArrayList<String> createAccount(
+        String username,
+        char[] password,
+        char[] repeatPassword,
+        String firstName,
+        String lastName,
+        String emailAddress,
+        String telNumber,
+        String streetAndHouseNum,
+        String zipCodeAndCity
+    ) {
+        // attempt creating a new account
+        final ArrayList<String> inputErrors = User.createAccount(username, password, repeatPassword, firstName, lastName, emailAddress, telNumber, streetAndHouseNum, zipCodeAndCity);
+
+        if(inputErrors.size() == 0) {
+            changeState(State.LOGIN);
+        } else {
+            System.out.println("Input values could not be validated.");
+        }
+
+        return inputErrors;
+    }
+
     // DANGER: This method does not check for the legality of changes!
     private void changeState(final State newState) {
         // Remove the current page from the container
         this.pageContainer.removeAll();
 
         // Set the new page
-        Page newPage;
         switch (newState) {
             case LOGIN:
-                // TODO Log out! (if logged in)
-                newPage = new LoginPage(this);
+                currentPage = new LoginPage(this);
                 break;
             case VIEW_ACCOUNT:
-                newPage = new AccountPage(this);
+                currentPage = new AccountPage(this);
+                break;
+            case CREATE_ACCOUNT:
+                currentPage = new CreateAccountPage(this);
                 break;
             default:
                 // Something's wrong, I can feel it.
-                newPage = null;
+                currentPage = null;
                 throw new IllegalStateException("Unknown state: " + newState);
         }
 
         // Add the new page to the pageContainer
-        pageContainer.add(newPage);
+        pageContainer.add(currentPage);
+
+        // Update pageContainer
+        pageContainer.revalidate();
+        pageContainer.repaint();
 
         // Set the new state
         this.currentState = newState;
+
+        if(newState != State.LOGIN) {
+            setDefaultButton();
+        }
+    }
+
+    public void setDefaultButton() {
+        // Set default button on default keypress 'ENTER'
+        JButton defaultButton = currentPage.getDefaultButton();
+        if(defaultButton != null) {
+            pageContainer.getRootPane().setDefaultButton(currentPage.getDefaultButton());
+        } else {
+            // No default button defined
+        }
     }
 
 }

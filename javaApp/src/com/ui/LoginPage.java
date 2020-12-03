@@ -8,6 +8,7 @@ class LoginPage extends Page {
     // Made final to avoid accidental override errors
     private final JTextField nameField = new JTextField(20);
     private final JPasswordField passwordField = new JPasswordField(20);
+    private JButton loginButton = new JButton("Login");
 
     LoginPage(Session session) {
         super(session);
@@ -17,7 +18,7 @@ class LoginPage extends Page {
         
         // :INPUT FIELDS
 
-        add(new JLabel("Login Name:"));
+        add(new JLabel("Account Name:"));
         add(nameField);
         add(new JLabel("Password:"));
         add(passwordField);
@@ -45,10 +46,14 @@ class LoginPage extends Page {
         // A simple FlowLayout for the buttons (with no gaps)
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
-        final JButton loginButton = new JButton("Login");
+        
         loginButton.addActionListener(e -> onLogin());
 
         buttonPanel.add(loginButton);
+    }
+
+    public JButton getDefaultButton() {
+        return loginButton;
     }
 
     private void onLogin() {
@@ -68,17 +73,7 @@ class LoginPage extends Page {
     }
 
     private void onCreateAccount() {
-        // Open the dummy CreateAccount component in a new modal dialog
-        final JDialog caDialog = new JDialog((JFrame) SwingUtilities.getRoot(this), "Sign Up", true);
-        // Wrap the CreateAccount panel in a ScrollPane
-        caDialog.add(new JScrollPane(CreateAccount.panel()));
-        
-        // Closing the dialog means completely disposing it
-        caDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        
-        // Pack and make visible
-        caDialog.pack();
-        caDialog.setVisible(true);
+        session.createAccountPage();
     }
 
 }
