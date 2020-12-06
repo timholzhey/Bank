@@ -100,7 +100,7 @@ class CreateAccountPage extends Page {
                 this,
                 "Successfully created a new account.\n",
                 "Incorrect Credentials",
-                JOptionPane.ERROR_MESSAGE
+                JOptionPane.INFORMATION_MESSAGE
             );
         }
     }

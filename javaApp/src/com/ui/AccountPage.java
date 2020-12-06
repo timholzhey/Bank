@@ -46,7 +46,7 @@ class AccountPage extends Page {
                 this,
                 "Logged out.",
                 "Logged out",
-                JOptionPane.ERROR_MESSAGE
+                JOptionPane.INFORMATION_MESSAGE
             );
         }
     }
